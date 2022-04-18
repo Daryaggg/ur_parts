@@ -21,3 +21,4 @@ init_odps_credentials.sh
 .local/
 build/
 pgdata/
+.DS_Store

@@ -1,4 +1,13 @@
-FROM python:3.8-slim as builder
+FROM python:3.8-slim as base
+
+COPY . /app/
+WORKDIR /app
+
+
+# ===========================
+# Image to run scraper script
+# ===========================
+FROM base as scraper
 
 RUN \
   apt-get update -qq && \
@@ -6,8 +15,15 @@ RUN \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
-COPY . /app/
 RUN python /app/setup.py install
-RUN pip install -r /app/requirements-app.txt
-WORKDIR /app
+
 ENTRYPOINT ["/bin/sh"]
+
+
+# ================
+# Image to run API
+# ================
+FROM base as webapp
+
+RUN pip install -r /app/requirements-app.txt
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

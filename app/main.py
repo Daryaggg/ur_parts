@@ -8,7 +8,7 @@ PG_HOST = os.environ.get("POSTGRES_HOST")
 PG_PORT = os.environ.get("POSTGRES_PORT")
 
 app = FastAPI()
-database = Database(f"postgresql://{PG_HOST}:{PG_PORT}/{DB_NAME}")
+database = Database(f"postgresql://{PG_HOST}:{PG_PORT}/{PG_DB_NAME}")
 
 
 @app.on_event("startup")

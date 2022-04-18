@@ -65,7 +65,9 @@ class DBLoader:
         )
 
     def check_data(self):
-        parts_v_count = self.cur.execute("select count(*) from parts_v").fetchone()[0]
+        self.cur.execute("select count(*) from parts_v")
+        parts_v_count = self.cur.fetchone()[0]
+
         scraped_count = len(self.urparts_data)
         if parts_v_count == scraped_count:
             logging.info(f"Data check passed. Number of data in DB is the same as scraped ({parts_v_count}).")
