@@ -4,7 +4,10 @@
 Service for scraping www.urparts.com website and build API for fetching data.
 
 ### Quick start
-Use ```docker-compose up``` to start the service.
+Use docker-compose to start the service.
+```
+docker-compose up
+```
 
 ### Stages
 1. [Postgres](https://www.postgresql.org/) database start up
@@ -12,9 +15,14 @@ Use ```docker-compose up``` to start the service.
 3. Starting the scraper if there is no data in the database yet
 4. Run webapp [FastAPI](https://fastapi.tiangolo.com/) on http://127.0.0.1:8000/ur_parts/
 
-[Web app docs](http://127.0.0.1:8000/docs#/)
-
-#### Run tests
+### Run tests
 ```
 bash tests/run_tests.sh
 ```
+
+### Tech
+- Python 3.8
+- requests
+- BeautifulSoup4
+- psycopg2
+- Encode Databases
