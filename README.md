@@ -13,3 +13,8 @@ Use ```docker-compose up``` to start the service.
 4. Run webapp [FastAPI](https://fastapi.tiangolo.com/) on http://127.0.0.1:8000/ur_parts/
 
 [Web app docs](http://127.0.0.1:8000/docs#/)
+
+#### Run tests
+```
+bash tests/run_tests.sh
+```
