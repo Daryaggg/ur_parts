@@ -1,8 +1,14 @@
+import os
+
 from databases import Database
 from fastapi import FastAPI
 
+PG_DB_NAME = os.environ.get("POSTGRES_DB")
+PG_HOST = os.environ.get("POSTGRES_HOST")
+PG_PORT = os.environ.get("POSTGRES_PORT")
+
 app = FastAPI()
-database = Database(f"sqlite:///UrParts.db")
+database = Database(f"postgresql://{PG_HOST}:{PG_PORT}/{DB_NAME}")
 
 
 @app.on_event("startup")

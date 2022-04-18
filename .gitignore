@@ -20,3 +20,4 @@ init_odps_credentials.sh
 .config/
 .local/
 build/
+pgdata/

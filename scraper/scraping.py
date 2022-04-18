@@ -91,5 +91,6 @@ def scrape_urparts(session: requests.Session) -> List[cfg.UrPartDataPoint]:
                 for part_obj in part_objects:
                     part_data = get_part_data(part_obj, vehicle_info=[brand_name, cat_name, model_name])
                     urparts_data.append(part_data)
+        break
 
     return urparts_data

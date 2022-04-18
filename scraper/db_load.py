@@ -1,12 +1,12 @@
 import logging
-import sqlite3
 from typing import List
 
+import psycopg2
 import scraper.config as cfg
 
 
 class DBLoader:
-    def __init__(self, con: sqlite3.Connection, urparts_data: List[cfg.UrPartDataPoint]):
+    def __init__(self, con: psycopg2.extensions.connection, urparts_data: List[cfg.UrPartDataPoint]):
         self.con = con
         self.cur = con.cursor()
 
@@ -15,15 +15,17 @@ class DBLoader:
     def _load_vehicle_brands(self):
         vehicle_unique_brands = {row[0] for row in self.urparts_data}
         self.vehicle_brands_table_data = {brand: i for i, brand in enumerate(vehicle_unique_brands)}
-        self.cur.execute("CREATE TABLE vehicle_brands (vehicle_brand char, vehicle_brand_id int)")
-        self.cur.executemany("INSERT INTO vehicle_brands VALUES (?, ?)", list(self.vehicle_brands_table_data.items()))
+        self.cur.executemany(
+            "INSERT INTO vehicle_brands (vehicle_brand, vehicle_brand_id) VALUES (%s, %s)",
+            list(self.vehicle_brands_table_data.items()),
+        )
 
     def _load_vehicle_categories(self):
         vehicle_unique_categories = {row[1] for row in self.urparts_data}
         self.vehicle_categories_table_data = {cat: i for i, cat in enumerate(vehicle_unique_categories)}
-        self.cur.execute("CREATE TABLE vehicle_categories (vehicle_category char, vehicle_category_id int)")
         self.cur.executemany(
-            "INSERT INTO vehicle_categories VALUES (?, ?)", list(self.vehicle_categories_table_data.items())
+            "INSERT INTO vehicle_categories (vehicle_category, vehicle_category_id) VALUES (%s, %s)",
+            list(self.vehicle_categories_table_data.items()),
         )
 
     def _load_vehicle_models(self):
@@ -33,49 +35,34 @@ class DBLoader:
             for i, model in enumerate(vehicle_unique_models)
         ]
         self.vehicle_models_dict = {model[3]: model[0] for model in vehicle_models_table_data}
-        self.cur.execute(
-            "CREATE TABLE vehicles (vehicle_id int, vehicle_brand_id int, vehicle_category_id int, vehicle_model char)"
+        self.cur.executemany(
+            """
+            INSERT INTO vehicles (vehicle_id, vehicle_brand_id, vehicle_category_id, vehicle_model)
+            VALUES (%s, %s, %s, %s)
+            """,
+            vehicle_models_table_data,
         )
-        self.cur.executemany("INSERT INTO vehicles VALUES (?, ?, ?, ?)", vehicle_models_table_data)
 
     def _load_part_categories(self):
         part_unique_categories = {row[4] for row in self.urparts_data}
         self.part_categories_table_data = {cat: i for i, cat in enumerate(part_unique_categories)}
-        self.cur.execute("CREATE TABLE part_categories (part_category char, part_category_id int)")
-        self.cur.executemany("INSERT INTO part_categories VALUES (?, ?)", list(self.part_categories_table_data.items()))
+        self.cur.executemany(
+            "INSERT INTO part_categories (part_category, part_category_id) VALUES (%s, %s)",
+            list(self.part_categories_table_data.items()),
+        )
 
     def _load_part_items(self):
         parts_table_data = [
             (i, part[5], part[3], self.part_categories_table_data[part[4]], self.vehicle_models_dict[part[2]])
             for i, part in enumerate(self.urparts_data)
         ]
-        self.cur.execute(
-            "CREATE TABLE parts (part_id int, part_site_id int, part_name char, part_category_id int, vehicle_id int)"
-        )
-        self.cur.executemany("INSERT INTO parts VALUES (?, ?, ?, ?, ?)", parts_table_data)
-
-    def create_view(self):
-        self.cur.execute(
+        self.cur.executemany(
             """
-            CREATE VIEW parts_v
-            AS
-            SELECT
-                vehicle_brand,
-                vehicle_category,
-                vehicle_model,
-                part_name,
-                part_category,
-                part_site_id,
-                part_id
-            FROM
-                parts
-            LEFT JOIN part_categories ON part_categories.part_category_id = parts.part_category_id
-            LEFT JOIN vehicles ON vehicles.vehicle_id = parts.vehicle_id
-            LEFT JOIN vehicle_categories ON vehicle_categories.vehicle_category_id = vehicles.vehicle_category_id
-            LEFT JOIN vehicle_brands ON vehicle_brands.vehicle_brand_id = vehicles.vehicle_brand_id
-        """
+            INSERT INTO parts (part_id, part_site_id, part_name, part_category_id, vehicle_id)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            parts_table_data,
         )
-        self.con.commit()
 
     def check_data(self):
         parts_v_count = self.cur.execute("select count(*) from parts_v").fetchone()[0]
