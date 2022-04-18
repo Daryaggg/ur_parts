@@ -1,5 +1,5 @@
 # UrParts scraper
-<img src="UrParts-company.jpeg" alt="UrPartsLogo" width="50"/>
+<img src="UrParts-company.jpeg" alt="UrPartsLogo" width="150"/>
 
 Service for scraping www.urparts.com website and build API for fetching data.
 
