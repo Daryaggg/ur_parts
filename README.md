@@ -1,5 +1,6 @@
 # UrParts scraper
-![UrPartsLogo](UrParts-company.jpeg)
+<img src="UrParts-company.jpeg" alt="UrPartsLogo" width="50"/>
+
 Service for scraping www.urparts.com website and build API for fetching data.
 
 ### Quick start
