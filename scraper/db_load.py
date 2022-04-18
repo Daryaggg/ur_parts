@@ -12,14 +12,6 @@ class DBLoader:
 
         self.urparts_data: List[cfg.UrPartDataPoint] = []
 
-    @property
-    def urparts_data(self):
-        return self._urparts_data
-
-    @urparts_data.setter
-    def urparts_data(self, data: List[cfg.UrPartDataPoint]):
-        self._urparts_data = data
-
     def _load_vehicle_brands(self):
         vehicle_unique_brands = {row[0] for row in self.urparts_data}
         self.vehicle_brands_table_data = {brand: i for i, brand in enumerate(vehicle_unique_brands)}
