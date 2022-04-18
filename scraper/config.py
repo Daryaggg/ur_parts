@@ -19,3 +19,5 @@ PG_USER = os.environ.get("POSTGRES_USER")
 PG_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 PG_HOST = os.environ.get("POSTGRES_HOST")
 PG_PORT = int(os.environ.get("POSTGRES_PORT"))
+
+PAGE_SIZE = 1000

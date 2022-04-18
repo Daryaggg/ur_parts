@@ -1,12 +1,13 @@
 import logging
 from typing import List
 
-import psycopg2
 import scraper.config as cfg
+from psycopg2.extensions import connection
+from psycopg2.extras import execute_batch
 
 
 class DBLoader:
-    def __init__(self, con: psycopg2.extensions.connection):
+    def __init__(self, con: connection):
         self.con = con
         self.cur = con.cursor()
 
@@ -23,9 +24,11 @@ class DBLoader:
     def _load_vehicle_brands(self):
         vehicle_unique_brands = {row[0] for row in self.urparts_data}
         self.vehicle_brands_table_data = {brand: i for i, brand in enumerate(vehicle_unique_brands)}
-        self.cur.executemany(
+        execute_batch(
+            self.cur,
             "INSERT INTO vehicle_brands (vehicle_brand, vehicle_brand_id) VALUES (%s, %s)",
             list(self.vehicle_brands_table_data.items()),
+            page_size=cfg.PAGE_SIZE,
         )
         self.con.commit()
         logging.info("vehicle_brands data loaded")
@@ -33,9 +36,11 @@ class DBLoader:
     def _load_vehicle_categories(self):
         vehicle_unique_categories = {row[1] for row in self.urparts_data}
         self.vehicle_categories_table_data = {cat: i for i, cat in enumerate(vehicle_unique_categories)}
-        self.cur.executemany(
+        execute_batch(
+            self.cur,
             "INSERT INTO vehicle_categories (vehicle_category, vehicle_category_id) VALUES (%s, %s)",
             list(self.vehicle_categories_table_data.items()),
+            page_size=cfg.PAGE_SIZE,
         )
         self.con.commit()
         logging.info("vehicle_categories data loaded")
@@ -47,12 +52,14 @@ class DBLoader:
             for i, model in enumerate(vehicle_unique_models)
         ]
         self.vehicle_models_dict = {model[3]: model[0] for model in vehicle_models_table_data}
-        self.cur.executemany(
+        execute_batch(
+            self.cur,
             """
             INSERT INTO vehicles (vehicle_id, vehicle_brand_id, vehicle_category_id, vehicle_model)
             VALUES (%s, %s, %s, %s)
             """,
             vehicle_models_table_data,
+            page_size=cfg.PAGE_SIZE,
         )
         self.con.commit()
         logging.info("vehicles data loaded")
@@ -60,9 +67,11 @@ class DBLoader:
     def _load_part_categories(self):
         part_unique_categories = {row[4] for row in self.urparts_data}
         self.part_categories_table_data = {cat: i for i, cat in enumerate(part_unique_categories)}
-        self.cur.executemany(
+        execute_batch(
+            self.cur,
             "INSERT INTO part_categories (part_category, part_category_id) VALUES (%s, %s)",
             list(self.part_categories_table_data.items()),
+            page_size=cfg.PAGE_SIZE,
         )
         self.con.commit()
         logging.info("part_categories data loaded")
@@ -72,12 +81,14 @@ class DBLoader:
             (i, part[5], part[3], self.part_categories_table_data[part[4]], self.vehicle_models_dict[part[2]])
             for i, part in enumerate(self.urparts_data)
         ]
-        self.cur.executemany(
+        execute_batch(
+            self.cur,
             """
             INSERT INTO parts (part_id, part_site_id, part_name, part_category_id, vehicle_id)
             VALUES (%s, %s, %s, %s, %s)
             """,
             parts_table_data,
+            page_size=cfg.PAGE_SIZE,
         )
         self.con.commit()
         logging.info("parts_items data loaded")
