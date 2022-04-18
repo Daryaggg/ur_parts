@@ -6,11 +6,19 @@ import scraper.config as cfg
 
 
 class DBLoader:
-    def __init__(self, con: psycopg2.extensions.connection, urparts_data: List[cfg.UrPartDataPoint]):
+    def __init__(self, con: psycopg2.extensions.connection):
         self.con = con
         self.cur = con.cursor()
 
-        self.urparts_data = urparts_data
+        self.urparts_data: List[cfg.UrPartDataPoint] = []
+
+    @property
+    def urparts_data(self):
+        return self._urparts_data
+
+    @urparts_data.setter
+    def urparts_data(self, data: List[cfg.UrPartDataPoint]):
+        self._urparts_data = data
 
     def _load_vehicle_brands(self):
         vehicle_unique_brands = {row[0] for row in self.urparts_data}
@@ -64,10 +72,18 @@ class DBLoader:
             parts_table_data,
         )
 
-    def check_data(self):
+    @property
+    def _data_count(self) -> int:
         self.cur.execute("select count(*) from parts_v")
-        parts_v_count = self.cur.fetchone()[0]
+        return self.cur.fetchone()[0]
 
+    @property
+    def data_exists(self) -> bool:
+        parts_v_count = self._data_count
+        return parts_v_count > 0
+
+    def check_data_count(self):
+        parts_v_count = self._data_count
         scraped_count = len(self.urparts_data)
         if parts_v_count == scraped_count:
             logging.info(f"Data check passed. Number of data in DB is the same as scraped ({parts_v_count}).")

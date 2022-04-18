@@ -1,10 +1,10 @@
 CREATE TABLE vehicle_brands (
-  vehicle_brand char(20),
+  vehicle_brand text,
   vehicle_brand_id int
 );
 
 CREATE TABLE vehicle_categories (
-  vehicle_category char(35),
+  vehicle_category text,
   vehicle_category_id int
 );
 
@@ -12,7 +12,7 @@ CREATE TABLE vehicles (
   vehicle_id int,
   vehicle_brand_id int,
   vehicle_category_id int,
-  vehicle_model char(20)
+  vehicle_model text
 );
 
 CREATE TABLE part_categories (
@@ -23,7 +23,7 @@ CREATE TABLE part_categories (
 CREATE TABLE parts (
   part_id int,
   part_site_id int,
-  part_name char(30),
+  part_name text,
   part_category_id int,
   vehicle_id int
 );

@@ -99,3 +99,5 @@ settings/env
 .idea
 README.md
 nbs/
+
+*.jpeg
