@@ -96,8 +96,12 @@ venv.bak/
 settings/env
 .gitlab-ci.yml
 .git/
+.gitignore
 .idea
 README.md
 nbs/
 
+*/.DS_Store
+.DS_Store
+pgdata/
 *.jpeg

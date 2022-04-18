@@ -9,7 +9,7 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 RUN python /app/setup.py install
-RUN pip install -r /app/requirements-dev.txt
+RUN pip install -r /app/requirements/requirements-dev.txt
 
 WORKDIR /app
 

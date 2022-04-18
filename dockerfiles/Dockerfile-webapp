@@ -2,7 +2,7 @@ FROM python:3.8-slim
 
 COPY . /app/
 
-RUN pip install -r /app/requirements-app.txt
+RUN pip install -r /app/requirements/requirements-app.txt
 
 WORKDIR /app
 

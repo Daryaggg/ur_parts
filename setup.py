@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 def find_requires():
     """Take requirements from file."""
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    with open(os.path.join(dir_path, "requirements-scraper.txt"), "r") as reqs:
+    with open(os.path.join(dir_path, "requirements/requirements-scraper.txt"), "r") as reqs:
         requirements = reqs.readlines()
     return requirements
 

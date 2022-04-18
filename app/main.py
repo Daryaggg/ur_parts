@@ -34,6 +34,16 @@ async def fetch_data(
     part_name: Optional[str] = None,
     part_category: Optional[str] = None,
 ):
+    """
+    Load data of UrParts with parameters:
+
+    - **limit**: Data limit. To specify no limit, set -1.
+    - **vehicle_brand**: Vehicle brand. e.g. 'Ammann'
+    - **vehicle_category**: Vehicle category/type. e.g. 'Roller Parts'
+    - **vehicle_model**: Vehicle model name. e.g. 'ASC100'
+    - **part_name**: Part model name. e.g. 'ND021197'
+    - **part_category**: Part category/type. e.g. 'bolt'
+    """
     conditions = {
         "vehicle_brand": vehicle_brand,
         "vehicle_category": vehicle_category,
