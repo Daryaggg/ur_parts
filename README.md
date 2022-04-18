@@ -25,4 +25,4 @@ bash tests/run_tests.sh
 - requests
 - BeautifulSoup4
 - psycopg2
-- Encode Databases
+- [Encode Databases](https://github.com/encode/databases)

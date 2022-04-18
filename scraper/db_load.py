@@ -12,6 +12,14 @@ class DBLoader:
 
         self.urparts_data: List[cfg.UrPartDataPoint] = []
 
+    @property
+    def urparts_data(self):
+        return self._urparts_data
+
+    @urparts_data.setter
+    def urparts_data(self, data: List[cfg.UrPartDataPoint]):
+        self._urparts_data = data
+
     def _load_vehicle_brands(self):
         vehicle_unique_brands = {row[0] for row in self.urparts_data}
         self.vehicle_brands_table_data = {brand: i for i, brand in enumerate(vehicle_unique_brands)}
@@ -19,6 +27,8 @@ class DBLoader:
             "INSERT INTO vehicle_brands (vehicle_brand, vehicle_brand_id) VALUES (%s, %s)",
             list(self.vehicle_brands_table_data.items()),
         )
+        self.con.commit()
+        logging.info("vehicle_brands data loaded")
 
     def _load_vehicle_categories(self):
         vehicle_unique_categories = {row[1] for row in self.urparts_data}
@@ -27,6 +37,8 @@ class DBLoader:
             "INSERT INTO vehicle_categories (vehicle_category, vehicle_category_id) VALUES (%s, %s)",
             list(self.vehicle_categories_table_data.items()),
         )
+        self.con.commit()
+        logging.info("vehicle_categories data loaded")
 
     def _load_vehicle_models(self):
         vehicle_unique_models = {(row[0], row[1], row[2]) for row in self.urparts_data}
@@ -42,6 +54,8 @@ class DBLoader:
             """,
             vehicle_models_table_data,
         )
+        self.con.commit()
+        logging.info("vehicles data loaded")
 
     def _load_part_categories(self):
         part_unique_categories = {row[4] for row in self.urparts_data}
@@ -50,6 +64,8 @@ class DBLoader:
             "INSERT INTO part_categories (part_category, part_category_id) VALUES (%s, %s)",
             list(self.part_categories_table_data.items()),
         )
+        self.con.commit()
+        logging.info("part_categories data loaded")
 
     def _load_part_items(self):
         parts_table_data = [
@@ -63,6 +79,8 @@ class DBLoader:
             """,
             parts_table_data,
         )
+        self.con.commit()
+        logging.info("parts_items data loaded")
 
     @property
     def _data_count(self) -> int:
@@ -89,5 +107,3 @@ class DBLoader:
 
         _ = self._load_part_categories()
         _ = self._load_part_items()
-
-        self.con.commit()
